@@ -1,0 +1,53 @@
+## Importing all headers
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+## Load Dataset
+df=pd.read_csv("C:/Users/GOPICHAND/Downloads/files/Iris.csv")
+df.head()
+df.shape
+df.head(6)
+df.isnull().sum()
+## Data Prerprocessing
+import seaborn as sns
+sns.boxplot(df['SepalLengthCm'])
+sns.scatterplot(data=df,x='SepalLengthCm',y='SepalWidthCm')
+sns.boxplot(df['SepalWidthCm'])
+p1=df['SepalLengthCm'].quantile(0.20)
+p3=df['SepalWidthCm'].quantile(0.70)
+iqr=p3-p1
+upper_limit=iqr*1.5+p3
+lower_limit=p1-1.5*iqr
+def Imputation(value):
+    if value > upper_limit:
+        return upper_limit
+    elif value < lower_limit:
+        return lower_limit
+    else:
+        return value
+df['SepalWidthCm']=df['SepalWidthCm'].apply(Imputation)
+sns.boxplot(df['SepalWidthCm'])
+sns.boxplot(df['PetalLengthCm'])
+sns.boxplot(df['PetalWidthCm'])
+df['PetalWidthCm'].unique()
+df['PetalLengthCm'].unique()
+df['SepalLengthCm'].unique()
+df['SepalWidthCm'].unique()
+df.shape
+## Importing the model
+from sklearn.tree import DecisionTreeClassifier
+tree=DecisionTreeClassifier()
+from sklearn.model_selection import train_test_split
+x=df.iloc[:,0:5]
+x.head(5)
+y=df['Species']
+x_train,x_test,y_train,y_test=train_test_split(x,y,random_state=42,test_size=0.2)
+tree.fit(x_train,y_train)
+## Predicting the labels
+y_pred=tree.predict(x_test)
+from sklearn.metrics import accuracy_score
+## Finding Accuracy
+accuracy=(accuracy_score(y_test,y_pred)*100)
+## Printing Accuracy
+print(accuracy)
+print(y_test,y_pred)

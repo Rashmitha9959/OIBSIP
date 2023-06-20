@@ -1,0 +1,88 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+df=pd.read_csv("C:/Users/GOPICHAND/Downloads/files/CarPrice.csv")
+df.head()
+df['enginelocation'].unique()
+df['fuelsystem'].unique()
+df['drivewheel'].unique()
+df['drivewheel']=df['drivewheel'].replace("4wd","fwd")
+df['drivewheel'].unique()
+df['fueltype'].unique()
+df['aspiration'].unique()
+df['carbody'].unique()
+df['doornumber'].unique()
+df.corr()
+df['car_ID']
+df
+correlation=df.corr()
+correlation['price']
+df=df.drop(['symboling','peakrpm','compressionratio','carheight','stroke'],axis=1)
+df.info()
+correlation=df.corr()
+correlation['price']
+df['wheelbase'].unique()
+df['enginesize'].unique()
+df.info()
+df['CarName'].unique().size
+df['CarName'].unique()
+df['fueltype'].unique()
+from sklearn.preprocessing import LabelEncoder
+encoder=LabelEncoder()
+df['fueltype']=encoder.fit_transform((df['fueltype']))
+df['fueltype'].unique()
+df['aspiration'].unique()
+df['aspiration']=encoder.fit_transform((df['aspiration']))
+df['doornumber'].unique()
+df['doornumber']=encoder.fit_transform((df['doornumber']))
+df['carbody'].unique()
+df.head()
+df.shape
+df['drivewheel'].unique()
+df['drivewheel']=encoder.fit_transform((df['drivewheel']))
+df['enginelocation'].unique()
+df['enginelocation']=encoder.fit_transform((df['enginelocation']))
+df['enginetype'].unique()
+df['cylindernumber'].unique()
+df['fuelsystem'].unique()
+df.head()
+df=df.iloc[:,2:]
+df.head()
+y=df['price']
+print(y)
+df=df.drop(['price'],axis=1)
+df.head()
+df=pd.get_dummies(df,['carbody','enginetype','cylindernumber','fuelsystem'],drop_first=True)
+df.info()
+df.head(5)
+df['price']=y
+df.info()
+from sklearn.linear_model import LinearRegression
+model=LinearRegression()
+from sklearn.model_selection import train_test_split
+x=df.iloc[:,:-1]
+x
+y=df['price']
+x_train,x_test,y_train,y_test=train_test_split(x,y,random_state=42,test_size=0.2)
+model=LinearRegression()
+model.fit(x_train,y_train)
+y_pred=model.predict(x_test)
+from sklearn.metrics import r2_score
+score=r2_score(y_test,y_pred)
+print(score*100)
+from sklearn.ensemble import RandomForestRegressor
+x=df.iloc[:,:-1]
+y=df['price']
+from sklearn.datasets import make_regression
+x,y=make_regression(n_features=4,n_informative=2,random_state=0,shuffle=False)
+model=RandomForestRegressor(max_depth=2,random_state=42)
+model.fit(x,y)
+y_pred=model.predict(x)
+score=r2_score(y,y_pred)
+score=score*100
+print(score)
+
+
+
+
+

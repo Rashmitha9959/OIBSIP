@@ -1,0 +1,81 @@
+##importing all libraries
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+## Importing Datasets
+df=pd.read_csv("C:/Users/GOPICHAND/Downloads/files/Advertising.csv")
+df.head()
+df.info()
+## removing unwanted columns
+df=df.iloc[:,1:6]
+df.head(5)
+## data containing is numerical data
+df.info()
+df.describe()
+df.isnull().sum()
+## Here we have no null values
+import seaborn as sns
+sns.boxplot(df['TV']) ## checking outliers
+sns.boxplot(df['Radio'])
+sns.boxplot(df['Sales'])
+sns.boxplot(df['Newspaper'])
+p1=df['Newspaper'].quantile(0.20)
+p3=df['Newspaper'].quantile(0.70)
+iqr=p3-p1
+lower_bond=p1-1.5*iqr
+upper_bond=1.5*iqr+p3
+def Imputation(values):
+    if values > upper_bond:
+        return upper_bond
+    elif values < lower_bond:
+        return lower_bond
+    else:
+        return values
+df['Newspaper']=df['Newspaper'].apply(Imputation)
+sns.boxplot(df['Newspaper'])
+## removig outlier
+## feature selection
+df.corr()
+## here we can see TV having maximum after ratio and than newspaper 
+## here we didn't have more dimensions to perfrom dimensionality reduction techniques
+## here we are using random forest for sales prediction
+from sklearn.ensemble import RandomForestRegressor
+model=RandomForestRegressor(n_estimators=100,random_state=42)
+x=df.iloc[:,0:3]
+x
+y=df['Sales']
+from sklearn.datasets import make_regression
+x,y=make_regression(n_features=4,n_informative=2,random_state=0,shuffle=False)
+## Here we are building random forest model
+cls=RandomForestRegressor(max_depth=2,random_state=0) 
+cls.fit(x,y)
+## Predict with test data
+y_pred=cls.predict(x)
+## finding r-square value
+from sklearn.metrics import r2_score
+score=r2_score(y,y_pred)
+score=round(score,2)*100
+##r-square value
+print(score)
+from sklearn.model_selection import train_test_split
+## Dividing the data into training and testing
+x_train,x_test,y_train,y_test=train_test_split(x,y,random_state=42,test_size=0.2)
+## Importing Linear Regression
+from sklearn.linear_model import LinearRegression 
+model=LinearRegression()
+## fitting the training data
+model.fit(x_train,y_train)
+##prediction
+y_pred=model.predict(x_test)
+score=r2_score(y_test,y_pred)
+score=score*100
+print(score)
+##printing the predicted values vs actual values
+print(y_pred,y_test)
+plt.figure(figsize=(12,6))
+plt.subplot(1,2,1)
+plt.plot(y_test,color="pink")
+plt.title("Actual Values")
+plt.subplot(1,2,2)
+plt.plot(y_test,color="red")
+plt.title("predicted values")
